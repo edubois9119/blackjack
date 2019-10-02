@@ -27,9 +27,8 @@ public class Shoe {
  @NonNull
   private Date created = new Date();
 
- @ColumnInfo(name = "marker_id")
+ @ColumnInfo(name = "marker_id", index = true)
   private Long markerId;
-
 
   public long getId() {
     return id;
