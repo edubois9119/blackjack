@@ -23,6 +23,8 @@ import java.util.Date;
 @TypeConverters(BlackjackDatabase.Converters.class)
 public abstract class BlackjackDatabase extends RoomDatabase {
 
+  protected BlackjackDatabase() {}
+
   private static Application applicationContext;
 
   public abstract ShoeDao getShoeDao();
@@ -41,7 +43,7 @@ public abstract class BlackjackDatabase extends RoomDatabase {
 
     private static final BlackjackDatabase INSTANCE;
 
-    static {
+    static {   //singleton instance of this class
       INSTANCE =
           Room.databaseBuilder(applicationContext, BlackjackDatabase.class, "blackjack_db").build();
     }
