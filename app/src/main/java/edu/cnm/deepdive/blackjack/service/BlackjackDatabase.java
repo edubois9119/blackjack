@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 import edu.cnm.deepdive.blackjack.model.dao.CardDao;
+import edu.cnm.deepdive.blackjack.model.dao.HandDao;
+import edu.cnm.deepdive.blackjack.model.dao.RoundDao;
 import edu.cnm.deepdive.blackjack.model.dao.ShoeDao;
 import edu.cnm.deepdive.blackjack.model.entity.Card;
 import edu.cnm.deepdive.blackjack.model.entity.Card.Rank;
@@ -31,8 +33,12 @@ public abstract class BlackjackDatabase extends RoomDatabase {
 
   public abstract CardDao getCardDao();
 
+  public abstract RoundDao getRoundDao();  // this is a declaration (abstract)  definition=combo of declaration and the body that implements it
+
+  public abstract HandDao getHandDao();
+
   public static void setApplicationContext(Application applicationContext) {
-    BlackjackDatabase.applicationContext = applicationContext;
+    BlackjackDatabase.applicationContext = applicationContext;   // this is a definition (concrete)
   }
 
   public static BlackjackDatabase getInstance() {
