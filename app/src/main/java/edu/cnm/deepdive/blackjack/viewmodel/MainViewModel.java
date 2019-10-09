@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import edu.cnm.deepdive.blackjack.model.dao.CardDao;
 import edu.cnm.deepdive.blackjack.model.entity.Card;
 import edu.cnm.deepdive.blackjack.model.entity.Card.Rank;
 import edu.cnm.deepdive.blackjack.model.entity.Card.Suit;
@@ -38,13 +39,13 @@ public class MainViewModel extends AndroidViewModel {
     super(application);
     database = BlackjackDatabase.getInstance();
     rng = new SecureRandom();  //TODO use Mersenne Twister
-    roundId= new MutableLiveData<>();
+    roundId = new MutableLiveData<>();
     round = Transformations.switchMap(roundId,
         (id) -> database.getRoundDao().getRoundWithDetails(id));
     dealerHandId = new MutableLiveData<>();
     dealerHand = Transformations.switchMap(dealerHandId,
-        (id)-> database.getHandDao().getHandWithCards(id));
-    playerHandId= new MutableLiveData<>();
+        (id) -> database.getHandDao().getHandWithCards(id));
+    playerHandId = new MutableLiveData<>();
     playerHand = Transformations.switchMap(playerHandId, (id) ->
         database.getHandDao().getHandWithCards(id));
   }
@@ -92,7 +93,7 @@ public class MainViewModel extends AndroidViewModel {
     new Thread(() ->
     {
       Round round = new Round();
-      if(shoeId==0) {
+      if (shoeId == 0) {
         createShoe();
       }
       round.setShoeId(shoeId);
@@ -102,7 +103,7 @@ public class MainViewModel extends AndroidViewModel {
       dealer.setDealer(true);
       Hand player = new Hand();
       player.setRoundId(roundId);
-      long[] handsId= database.getHandDao().insert(dealer, player);
+      long[] handsId = database.getHandDao().insert(dealer, player);
       for (long handId : handsId) {
         for (int i = 0; i < 2; i++) {
           Card card = database.getCardDao().getTopCardInShoe(shoeId);
@@ -115,7 +116,18 @@ public class MainViewModel extends AndroidViewModel {
       this.dealerHandId.postValue(handsId[0]);
       this.playerHandId.postValue(handsId[1]);
     }).start();
+  }
 
+  public void hitPlayer() {
+    new Thread(() -> {
+      CardDao dao = database.getCardDao();
+      Long handId= playerHandId.getValue();
+      Card card = dao.getTopCardInShoe(shoeId);
+      card.setShoeId(null);
+      card.setHandId(handId);
+      dao.update(card);
+      playerHandId.postValue(handId);
+    }).start();
   }
 
 }
