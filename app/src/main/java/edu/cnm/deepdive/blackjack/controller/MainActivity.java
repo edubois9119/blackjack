@@ -19,10 +19,9 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-   MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-    viewModel.getRound().observe(this, (round) -> {
-    });
+    MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
     Button addDeck = findViewById(R.id.start_round);
     addDeck.setOnClickListener((view) -> viewModel.startRound());
+    viewModel.startRound();
   }
 }

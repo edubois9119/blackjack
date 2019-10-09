@@ -120,7 +120,7 @@ public class MainViewModel extends AndroidViewModel {
   public void hitPlayer() {
     new Thread(() -> {
       CardDao dao = database.getCardDao();
-      Long handId= playerHandId.getValue();
+      Long handId = playerHandId.getValue();
       Card card = getTopCard(handId);
       playerHandId.postValue(handId);
     }).start();
@@ -132,11 +132,22 @@ public class MainViewModel extends AndroidViewModel {
     card.setShoeId(null);
     card.setHandId(handId);
     cardDao.update(card);
-    if (card.getId() == markerId){
+    if (card.getId() == markerId) {
       shuffleNeeded = true;
     }
     return card;
   }
 
+  public void startDealer() {
+    new Thread(() -> {
+      long handId = dealerHandId.getValue();
+      HandWithCards dealer = dealerHand.getValue();
+      List<Card> cards = dealer.getCards();
+      while (dealer.getHardValue() < 17 || dealer.getSoftValue() < 18) {
+        cards.add(getTopCard(handId));
+        dealerHandId.postValue(handId);  //trick we use to force refresh on live data
+      }
+    }).start();
+  }
 
 }
